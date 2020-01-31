@@ -1,3 +1,10 @@
+# Build instructions from Geert
+After installing the relevant dependencies, I used
+```
+cmake ../ -DCMAKE_INSTALL_PREFIX=`python3 -c "import site; print(site.getsitepackages()[0])"` -DCMAKE_CXX_FLAGS=-march=native -DCMAKE_C_FLAGS=-march=native -DENABLE_CUDA=ON -DENABLE_MPI=ON -DCMAKE_C_COMPILER=/usr/bin/gcc-6 -DENABLE_TBB=OFF -DMKL_LIBRARIES=""
+```
+and then `make` and `make install`.
+
 # HOOMD-blue
 
 [![Citing HOOMD](https://img.shields.io/badge/cite-hoomd-blue.svg)](https://glotzerlab.engin.umich.edu/hoomd-blue/citing.html)
