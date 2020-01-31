@@ -26,6 +26,7 @@
 #include "EvaluatorPairLJ1208.h"
 #include "EvaluatorPairDLVO.h"
 #include "EvaluatorPairFourier.h"
+#include "EvaluatorPairIPLEdan.h"
 
 #ifdef ENABLE_CUDA
 #include "PotentialPairGPU.h"
@@ -80,6 +81,8 @@ typedef PotentialPair<EvaluatorPairLJ1208> PotentialPairLJ1208;
 typedef PotentialPair<EvaluatorPairDLVO> PotentialPairDLVO;
 //! Pair potential force compute for Fourier potential
 typedef PotentialPair<EvaluatorPairFourier> PotentialPairFourier;
+//! Pair potential force compute for IPL Edan potential.
+typedef PotentialPair<EvaluatorPairIPLEdan> PotentialPairIPLEdan;
 
 #ifdef ENABLE_CUDA
 //! Pair potential force compute for lj forces on the GPU
@@ -120,6 +123,8 @@ typedef PotentialPairGPU< EvaluatorPairLJ1208, gpu_compute_lj1208_forces > Poten
 typedef PotentialPairGPU< EvaluatorPairDLVO, gpu_compute_dlvo_forces > PotentialPairDLVOGPU;
 //! Pair potential force compute for Fourier forces on the gpu
 typedef PotentialPairGPU<EvaluatorPairFourier, gpu_compute_fourier_forces> PotentialPairFourierGPU;
+//! Pair potential force compute for IPLEdan forces on the GPU
+typedef PotentialPairGPU< EvaluatorPairIPLEdan, gpu_compute_ipl_edan_forces > PotentialPairIPLEdanGPU;
 #endif
 
 #endif // __PAIR_POTENTIALS_H__

@@ -16,6 +16,7 @@
 #include "EvaluatorPairDPDThermo.h"
 #include "EvaluatorPairDPDLJThermo.h"
 #include "EvaluatorPairFourier.h"
+#include "EvaluatorPairIPLEdan.h"
 
 //! Compute lj pair forces on the GPU with PairEvaluatorLJ
 cudaError_t gpu_compute_ljtemp_forces(const pair_args_t& pair_args,
@@ -92,5 +93,9 @@ cudaError_t gpu_compute_dlvo_forces(const pair_args_t & args,
 //! Compute Fourier potential pair forces on the GPU with PairEvaluatorFourier
 cudaError_t gpu_compute_fourier_forces(const pair_args_t & pair_args,
                                             const typename EvaluatorPairFourier::param_type *d_params);
+
+//! Compute ipl_edan pair forces on the GPU with PairEvaluatorIPLEdan
+cudaError_t gpu_compute_ipl_edan_forces(const pair_args_t & pair_args,
+                                      const typename EvaluatorPairIPLEdan::param_type *d_params);
 
 #endif

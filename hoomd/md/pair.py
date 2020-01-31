@@ -2912,3 +2912,73 @@ class fourier(pair):
         fourier_b = coeff['fourier_b'];
 
         return _md.make_pair_fourier_params(fourier_a,fourier_b);
+
+
+# From here on out, it's my own added stuff. -Geert.
+class ipl_edan(pair):
+    R""" 
+    Args:
+        r_cut (float): Default cutoff radius (in distance units).
+        nlist (:py:mod:`hoomd.md.nlist`): Neighbor list
+        name (str): Name of the force instance.
+
+    See :py:class:`pair` for details on how forces are calculated and the available energy shifting and smoothing modes.
+    Use :py:meth:`pair_coeff.set <coeff.set>` to set potential coefficients.
+
+    The following coefficients must be set per unique pair of particle types:
+
+    - :math:`\varepsilon` - *epsilon* (in energy units)
+    - :math:`\sigma` - *sigma* (in distance units)
+    - :math:`\alpha` - *alpha* (unitless) - *optional*: defaults to 1.0
+    - :math:`r_{\mathrm{cut}}` - *r_cut* (in distance units)
+      - *optional*: defaults to the global r_cut specified in the pair command
+    - :math:`r_{\mathrm{on}}`- *r_on* (in distance units)
+      - *optional*: defaults to the global r_cut specified in the pair command
+
+    Example::
+
+        nl = nlist.cell()
+        lj = pair.lj(r_cut=3.0, nlist=nl)
+        lj.pair_coeff.set('A', 'A', epsilon=1.0, sigma=1.0)
+        lj.pair_coeff.set('A', 'B', epsilon=2.0, sigma=1.0, alpha=0.5, r_cut=3.0, r_on=2.0);
+        lj.pair_coeff.set('B', 'B', epsilon=1.0, sigma=1.0, r_cut=2**(1.0/6.0), r_on=2.0);
+        lj.pair_coeff.set(['A', 'B'], ['C', 'D'], epsilon=1.5, sigma=2.0)
+
+    """
+    def __init__(self, r_cut, nlist, name=None):
+        hoomd.util.print_status_line();
+
+        # tell the base class how we operate
+
+        # initialize the base class
+        pair.__init__(self, r_cut, nlist, name);
+
+        # create the c++ mirror class
+        if not hoomd.context.exec_conf.isCUDAEnabled():
+            self.cpp_force = _md.PotentialPairIPLEdan(hoomd.context.current.system_definition, self.nlist.cpp_nlist, self.name)
+            self.cpp_class = _md.PotentialPairIPLEdan
+        else:
+            self.nlist.cpp_nlist.setStorageMode(_md.NeighborList.storageMode.full)
+            self.cpp_force = _md.PotentialPairIPLEdanGPU(hoomd.context.current.system_definition, self.nlist.cpp_nlist, self.name)
+            self.cpp_class = _md.PotentialPairIPLEdanGPU
+
+        hoomd.context.current.system.addCompute(self.cpp_force, self.force_name);
+
+        # setup the coefficient options
+        self.required_coeffs = ['epsilon', 'sigma']
+        self.pair_coeff.set_default_coeff('epsilon', 1.0)
+
+    def process_coeff(self, coeff):
+        epsilon = coeff['epsilon']
+        sigma = coeff['sigma']
+        r_cut = coeff['r_cut']
+
+        x_cut = r_cut / sigma
+        one_over_sigma2 = 1.0 / (sigma*sigma)
+        
+        c0 = -56 * x_cut ** (-10)
+        c2 = 140 * x_cut ** (-12)
+        c4 = -120 * x_cut ** (-14)
+        c6 = 35 * x_cut ** (-16)
+
+        return _md.make_ipl_edan_params(_hoomd.make_scalar2(epsilon, one_over_sigma2), _hoomd.make_scalar4(c0, c2, c4, c6))

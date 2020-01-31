@@ -40,6 +40,7 @@
 #include "PotentialPairDPDThermo.h"
 #include "PotentialPair.h"
 #include "PotentialTersoff.h"
+#include "PotentialTersoff.h"
 #include "PPPMForceCompute.h"
 #include "QuaternionMath.h"
 #include "TableAngleForceCompute.h"
@@ -120,6 +121,26 @@ void export_tersoff_params(py::module& m)
         ;
 
     m.def("make_tersoff_params", &make_tersoff_params);
+}
+
+inline ipl_edan_params make_ipl_edan_params(Scalar2 coeffs, Scalar4 smoothing_constants)
+    {
+    ipl_edan_params retval;
+    retval.coeffs = coeffs;
+    retval.smoothing_constants = smoothing_constants;
+    return retval;
+  	}
+
+//! Function to export the ipl_edan parameter type to python
+void export_ipl_edan_params(py::module& m)
+{
+    py::class_<ipl_edan_params>(m, "ipl_edan_params")
+        .def(py::init<>())
+        .def_readwrite("coeffs", &ipl_edan_params::coeffs)
+        .def_readwrite("smoothing_constants", &ipl_edan_params::smoothing_constants)
+        ;
+
+    m.def("make_ipl_edan_params", &make_ipl_edan_params);
 }
 
 //! Function to make the Fourier parameter type
@@ -268,8 +289,10 @@ PYBIND11_MODULE(_md, m)
     export_PotentialPair<PotentialPairReactionField>(m, "PotentialPairReactionField");
     export_PotentialPair<PotentialPairDLVO>(m, "PotentialPairDLVO");
     export_PotentialPair<PotentialPairFourier>(m, "PotentialPairFourier");
+		export_PotentialPair<PotentialPairIPLEdan>(m, "PotentialPairIPLEdan");
     export_tersoff_params(m);
     export_pair_params(m);
+		export_ipl_edan_params(m);
     export_AnisoPotentialPair<AnisoPotentialPairGB>(m, "AnisoPotentialPairGB");
     export_AnisoPotentialPair<AnisoPotentialPairDipole>(m, "AnisoPotentialPairDipole");
     export_PotentialPair<PotentialPairForceShiftedLJ>(m, "PotentialPairForceShiftedLJ");
@@ -318,6 +341,7 @@ PYBIND11_MODULE(_md, m)
     export_PotentialPairGPU<PotentialPairReactionFieldGPU, PotentialPairReactionField>(m, "PotentialPairReactionFieldGPU");
     export_PotentialPairGPU<PotentialPairDLVOGPU, PotentialPairDLVO>(m, "PotentialPairDLVOGPU");
     export_PotentialPairGPU<PotentialPairFourierGPU, PotentialPairFourier>(m, "PotentialPairFourierGPU");
+		export_PotentialPairGPU<PotentialPairIPLEdanGPU, PotentialPairIPLEdan>(m, "PotentialPairIPLEdanGPU");
     export_PotentialPairGPU<PotentialPairEwaldGPU, PotentialPairEwald>(m, "PotentialPairEwaldGPU");
     export_PotentialPairGPU<PotentialPairMorseGPU, PotentialPairMorse>(m, "PotentialPairMorseGPU");
     export_PotentialPairGPU<PotentialPairDPDGPU, PotentialPairDPD>(m, "PotentialPairDPDGPU");
