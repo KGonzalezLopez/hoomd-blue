@@ -98,4 +98,8 @@ cudaError_t gpu_compute_fourier_forces(const pair_args_t & pair_args,
 cudaError_t gpu_compute_ipl_edan_forces(const pair_args_t & pair_args,
                                       const typename EvaluatorPairIPLEdan::param_type *d_params);
 
+//! Compute hertzian pair forces on the GPU with PairEvaluatorHertzian
+cudaError_t gpu_compute_hertzian_forces(const pair_args_t& pair_args,
+                                      const Scalar2 *d_params);
+
 #endif

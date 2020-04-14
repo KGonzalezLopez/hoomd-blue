@@ -290,6 +290,7 @@ PYBIND11_MODULE(_md, m)
     export_PotentialPair<PotentialPairDLVO>(m, "PotentialPairDLVO");
     export_PotentialPair<PotentialPairFourier>(m, "PotentialPairFourier");
 		export_PotentialPair<PotentialPairIPLEdan>(m, "PotentialPairIPLEdan");
+		export_PotentialPair<PotentialPairHertzian>(m, "PotentialPairHertzian");
     export_tersoff_params(m);
     export_pair_params(m);
 		export_ipl_edan_params(m);
@@ -342,6 +343,7 @@ PYBIND11_MODULE(_md, m)
     export_PotentialPairGPU<PotentialPairDLVOGPU, PotentialPairDLVO>(m, "PotentialPairDLVOGPU");
     export_PotentialPairGPU<PotentialPairFourierGPU, PotentialPairFourier>(m, "PotentialPairFourierGPU");
 		export_PotentialPairGPU<PotentialPairIPLEdanGPU, PotentialPairIPLEdan>(m, "PotentialPairIPLEdanGPU");
+		export_PotentialPairGPU<PotentialPairHertzianGPU, PotentialPairHertzian>(m, "PotentialPairHertzianGPU");
     export_PotentialPairGPU<PotentialPairEwaldGPU, PotentialPairEwald>(m, "PotentialPairEwaldGPU");
     export_PotentialPairGPU<PotentialPairMorseGPU, PotentialPairMorse>(m, "PotentialPairMorseGPU");
     export_PotentialPairGPU<PotentialPairDPDGPU, PotentialPairDPD>(m, "PotentialPairDPDGPU");
