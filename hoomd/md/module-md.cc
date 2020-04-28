@@ -143,6 +143,28 @@ void export_ipl_edan_params(py::module& m)
     m.def("make_ipl_edan_params", &make_ipl_edan_params);
 }
 
+inline sticky_spheres_params make_sticky_spheres_params(Scalar2 coeffs, Scalar4 smoothing_constants, Scalar2 smoothing_constants_pot)
+    {
+    sticky_spheres_params retval;
+    retval.coeffs = coeffs;
+    retval.smoothing_constants = smoothing_constants;
+    retval.smoothing_constants_pot = smoothing_constants_pot;
+    return retval;
+  	}
+
+//! Function to export the sticky_spheres parameter type to python
+void export_sticky_spheres_params(py::module& m)
+{
+    py::class_<sticky_spheres_params>(m, "sticky_spheres_params")
+        .def(py::init<>())
+        .def_readwrite("coeffs", &sticky_spheres_params::coeffs)
+        .def_readwrite("smoothing_constants", &sticky_spheres_params::smoothing_constants)
+        .def_readwrite("smoothing_constants_pot", &sticky_spheres_params::smoothing_constants_pot)
+        ;
+
+    m.def("make_sticky_spheres_params", &make_sticky_spheres_params);
+}
+
 //! Function to make the Fourier parameter type
 inline pair_fourier_params make_pair_fourier_params(py::list a, py::list b)
     {
@@ -291,9 +313,11 @@ PYBIND11_MODULE(_md, m)
     export_PotentialPair<PotentialPairFourier>(m, "PotentialPairFourier");
 		export_PotentialPair<PotentialPairIPLEdan>(m, "PotentialPairIPLEdan");
 		export_PotentialPair<PotentialPairHertzian>(m, "PotentialPairHertzian");
+		export_PotentialPair<PotentialPairStickySpheres>(m, "PotentialPairStickySpheres");
     export_tersoff_params(m);
     export_pair_params(m);
 		export_ipl_edan_params(m);
+		export_sticky_spheres_params(m);
     export_AnisoPotentialPair<AnisoPotentialPairGB>(m, "AnisoPotentialPairGB");
     export_AnisoPotentialPair<AnisoPotentialPairDipole>(m, "AnisoPotentialPairDipole");
     export_PotentialPair<PotentialPairForceShiftedLJ>(m, "PotentialPairForceShiftedLJ");
@@ -344,6 +368,7 @@ PYBIND11_MODULE(_md, m)
     export_PotentialPairGPU<PotentialPairFourierGPU, PotentialPairFourier>(m, "PotentialPairFourierGPU");
 		export_PotentialPairGPU<PotentialPairIPLEdanGPU, PotentialPairIPLEdan>(m, "PotentialPairIPLEdanGPU");
 		export_PotentialPairGPU<PotentialPairHertzianGPU, PotentialPairHertzian>(m, "PotentialPairHertzianGPU");
+		export_PotentialPairGPU<PotentialPairStickySpheresGPU, PotentialPairStickySpheres>(m, "PotentialPairStickySpheresGPU");
     export_PotentialPairGPU<PotentialPairEwaldGPU, PotentialPairEwald>(m, "PotentialPairEwaldGPU");
     export_PotentialPairGPU<PotentialPairMorseGPU, PotentialPairMorse>(m, "PotentialPairMorseGPU");
     export_PotentialPairGPU<PotentialPairDPDGPU, PotentialPairDPD>(m, "PotentialPairDPDGPU");

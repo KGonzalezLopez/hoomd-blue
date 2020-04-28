@@ -17,6 +17,7 @@
 #include "EvaluatorPairDPDLJThermo.h"
 #include "EvaluatorPairFourier.h"
 #include "EvaluatorPairIPLEdan.h"
+#include "EvaluatorPairStickySpheres.h"
 
 //! Compute lj pair forces on the GPU with PairEvaluatorLJ
 cudaError_t gpu_compute_ljtemp_forces(const pair_args_t& pair_args,
@@ -101,5 +102,8 @@ cudaError_t gpu_compute_ipl_edan_forces(const pair_args_t & pair_args,
 //! Compute hertzian pair forces on the GPU with PairEvaluatorHertzian
 cudaError_t gpu_compute_hertzian_forces(const pair_args_t& pair_args,
                                       const Scalar2 *d_params);
+
+cudaError_t gpu_compute_sticky_spheres_forces(const pair_args_t & pair_args,
+                                      const typename EvaluatorPairStickySpheres::param_type *d_params);
 
 #endif

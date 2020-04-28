@@ -93,6 +93,7 @@ set(_md_headers ActiveForceComputeGPU.h
                 EvaluatorPairZBL.h
 								EvaluatorPairIPLEdan.h
 								EvaluatorPairHertzian.h
+								EvaluatorPairStickySpheres.h
                 EvaluatorTersoff.h
                 EvaluatorWalls.h
                 FIREEnergyMinimizerGPU.h
@@ -217,6 +218,7 @@ set(_md_cu_sources ActiveForceComputeGPU.cu
                       FourierDriverPotentialPairGPU.cu
 											IPLEdanDriverPotentialPairGPU.cu
 											HertzianDriverPotentialPairGPU.cu
+											StickySpheresDriverPotentialPairGPU.cu
                       PairLJ1208DriverPotentialPairGPU.cu
                       ReactionFieldDriverPotentialPairGPU.cu
                       SLJDriverPotentialPairGPU.cu
