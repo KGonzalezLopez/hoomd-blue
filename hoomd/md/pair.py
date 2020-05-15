@@ -3130,7 +3130,6 @@ class sticky_spheres(pair):
         }
         if x_cut in known_x_cut:
             a, b, c0, c2, c4, c6 = known_x_cut[x_cut]
-            print("Smoothing constants known for x_cut = %g, which is %g * x_min" % (x_cut, x_cut / self.x_min))
             return a, b, c0, c2, c4, c6
         else:
             raise RuntimeError("I don't know the smoothing constants for x_cut = %g" % x_cut)

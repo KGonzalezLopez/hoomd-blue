@@ -214,7 +214,7 @@ class PYBIND11_EXPORT System
                     if (m_is_variable_period)
                         {
                         pybind11::object pynext = m_update_func(m_n);
-                        int next = (int)pybind11::cast<float>(pynext) + m_created_tstep;
+                        int next = pybind11::cast<int>(pynext) + m_created_tstep;
 
                         if (next < 0)
                             {
@@ -224,7 +224,7 @@ class PYBIND11_EXPORT System
 
                         if ((unsigned int)next <= tstep)
                             {
-                            m_analyzer->getExecConf()->msg->warning() << "Variable period returned a value equal to the current timestep. Increasing by 1 to prevent inconsistencies" << std::endl;
+                            m_analyzer->getExecConf()->msg->warning() << "Variable period returned a value equal to the current timestep. Increasing by 1 to prevent inconsistencies. Current timestep: " << tstep << ". From period function: " << next  << "." << std::endl;
                             next = tstep+1;
                             }
 
@@ -321,7 +321,7 @@ class PYBIND11_EXPORT System
                     if (m_is_variable_period)
                         {
                         pybind11::object pynext = m_update_func(m_n);
-                        int next = (int)pybind11::cast<float>(pynext) + m_created_tstep;
+                        int next = pybind11::cast<int>(pynext) + m_created_tstep;
 
                         if (next < 0)
                             {
@@ -331,7 +331,7 @@ class PYBIND11_EXPORT System
 
                         if ((unsigned int)next <= tstep)
                             {
-                            m_updater->getExecConf()->msg->warning() << "Variable period returned a value equal to the current timestep. Increasing by 1 to prevent inconsistencies" << std::endl;
+                            m_updater->getExecConf()->msg->warning() << "Variable period returned a value equal to the current timestep. Increasing by 1 to prevent inconsistencies. Current timestep: " << tstep << ". From period function: " << next  << "." << std::endl;
                             next = tstep+1;
                             }
 
