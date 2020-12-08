@@ -122,6 +122,13 @@ void export_tersoff_params(py::module& m)
     m.def("make_tersoff_params", &make_tersoff_params);
 }
 
+//! Function to make the Gaussian Polynomial parameter type
+inline gauss_polynomial_params make_gauss_polynomial_params(Scalar4 smoothing_constants)
+    {
+    gauss_polynomial_params retval;
+    retval.smoothing_constants = smoothing_constants; 
+    return retval;
+    }
 
 //! Function to make the Fourier parameter type
 inline pair_fourier_params make_pair_fourier_params(py::list a, py::list b)
@@ -154,6 +161,16 @@ inline pair_dipole_params make_pair_dipole_params(Scalar mu, Scalar A, Scalar ka
     retval.kappa = kappa;
     return retval;
     }
+
+//! Function to export Gaussian polynomial parameter type to python
+void export_gauss_polynomial_params(py::module& m)
+{
+	py::class_<gauss_polynomial_params>(m, "gauss_polynomial_params")
+		.def(py::init<>())
+		.def_readwrite("smooothing_constants", &gauss_polynomial_params::smoothing_constants)
+		;
+	m.def("make_gauss_polynomial_params", &make_gauss_polynomial_params);
+}
 
 //! Function to export the fourier parameter type to python
 void export_pair_params(py::module& m)
@@ -269,8 +286,10 @@ PYBIND11_MODULE(_md, m)
     export_PotentialPair<PotentialPairReactionField>(m, "PotentialPairReactionField");
     export_PotentialPair<PotentialPairDLVO>(m, "PotentialPairDLVO");
     export_PotentialPair<PotentialPairFourier>(m, "PotentialPairFourier");
+    export_PotentialPair<PotentialPairGaussPolynomial>(m, "PotentialPairGaussPolynomial");
     export_tersoff_params(m);
     export_pair_params(m);
+    export_gauss_polynomial_params(m);
     export_AnisoPotentialPair<AnisoPotentialPairGB>(m, "AnisoPotentialPairGB");
     export_AnisoPotentialPair<AnisoPotentialPairDipole>(m, "AnisoPotentialPairDipole");
     export_PotentialPair<PotentialPairForceShiftedLJ>(m, "PotentialPairForceShiftedLJ");
@@ -331,6 +350,7 @@ PYBIND11_MODULE(_md, m)
     export_PotentialPairDPDThermoGPU<PotentialPairDPDThermoDPDGPU, PotentialPairDPDThermoDPD >(m, "PotentialPairDPDThermoDPDGPU");
     export_PotentialPairGPU<PotentialPairDPDLJGPU, PotentialPairDPDLJ>(m, "PotentialPairDPDLJGPU");
     export_PotentialPairDPDThermoGPU<PotentialPairDPDLJThermoDPDGPU, PotentialPairDPDLJThermoDPD >(m, "PotentialPairDPDLJThermoDPDGPU");
+    export_PotentialPairGPU<PotentialPairGaussPolynomialGPU, PotentialPairGaussPolynomial>(m, "PotentialPairGaussPolynomialGPU"); 
     export_AnisoPotentialPairGPU<AnisoPotentialPairGBGPU, AnisoPotentialPairGB>(m, "AnisoPotentialPairGBGPU");
     export_AnisoPotentialPairGPU<AnisoPotentialPairDipoleGPU, AnisoPotentialPairDipole>(m, "AnisoPotentialPairDipoleGPU");
     export_PotentialBondGPU<PotentialBondHarmonicGPU, PotentialBondHarmonic>(m, "PotentialBondHarmonicGPU");

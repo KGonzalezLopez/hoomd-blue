@@ -4,8 +4,8 @@
 
 // Maintainer: joaander
 
-#ifndef __PAIR_EVALUATOR_GAUSS_H__
-#define __PAIR_EVALUATOR_GAUSS_H__
+#ifndef __PAIR_EVALUATOR_GAUSS_POLYNOMIAL_H__
+#define __PAIR_EVALUATOR_GAUSS_POLYNOMIAL_H__
 
 #ifndef NVCC
 #include <string>
@@ -43,11 +43,19 @@
     - \a sigma = \f$ \sigma \f$
 
 */
+
+//! Parameter type for this potential
+struct gauss_polynomial_params
+    {
+    Scalar2 coeffs; //!< epsilon, sigma
+    Scalar4 smoothing_constants; //!< c0, c2, c4, c6 to smooth potential.
+};
+
 class EvaluatorPairGaussPolynomial
     {
     public:
         //! Define the parameter type used by this pair potential evaluator
-        typedef Scalar2 param_type;
+        typedef gauss_polynomial_params param_type;
 
         //! Constructs the pair potential evaluator
         /*! \param _rsq Squared distance between the particles
@@ -55,7 +63,8 @@ class EvaluatorPairGaussPolynomial
             \param _params Per type pair parameters of this potential
         */
         DEVICE EvaluatorPairGaussPolynomial(Scalar _rsq, Scalar _rcutsq, const param_type& _params)
-            : rsq(_rsq), rcutsq(_rcutsq), epsilon(_params.x), sigma(_params.y)
+            : rsq(_rsq), rcutsq(_rcutsq), epsilon(_params.coeffs.x), sigma(_params.coeffs.y), 
+            c0(_params.smoothing_constants.x), c2(_params.smoothing_constants.y), c4(_params.smoothing_constants.z), c6(_params.smoothing_constants.w)
             {
             }
 
@@ -96,18 +105,13 @@ class EvaluatorPairGaussPolynomial
                 Scalar r_over_sigma_frth = r_over_sigma_sq * r_over_sigma_sq;
                 Scalar r_over_sigma_sxth = r_over_sigma_sq * r_over_sigma_sq * r_over_sigma_sq;
                 Scalar exp_val = fast::exp(-Scalar(1.0)/Scalar(2.0) * r_over_sigma_sq);
-                //KGL: coefficients for U[rcut]==0 and the 3 first derivatives, rcut = 4.0.
-                Scalar C0 = -0.04238011199168398;
-                Scalar C2 = 0.006876983872001491;
-                Scalar C4 = -0.00037739545639032575;
-                Scalar C6 = 6.988804747968997e-6;
-		        Scalar pol_val = (C6 * r_over_sigma_sxth + C4 * r_over_sigma_frth \
-				                + C2 * r_over_sima_sq + C0);  
+		Scalar pol_val = (c6 * r_over_sigma_sxth + c4 * r_over_sigma_frth \
+				                + c2 * r_over_sima_sq + c0);  
 
-                force_divr = epsilon / sigma_sq * (exp_val - Scalar(6.0) * C6 * r_over_sigma_frth
-                                    - Scalar(4.0) * C4 * r_over_sigma_sq - Scalar(2.0) * C2);
+                force_divr = epsilon / sigma_sq * (exp_val - Scalar(6.0) * c6 * r_over_sigma_frth
+                                    - Scalar(4.0) * c4 * r_over_sigma_sq - Scalar(2.0) * c2);
                 pair_eng = epsilon * (exp_val + pol_val);
-                //KGL: wont change this function because I wont use the shift
+                //wont change this function because I wont use the shift -Karina
                 if (energy_shift)
                     {
                     pair_eng -= epsilon * fast::exp(-Scalar(1.0)/Scalar(2.0) * rcutsq / sigma_sq);
@@ -139,6 +143,10 @@ class EvaluatorPairGaussPolynomial
         Scalar rcutsq;  //!< Stored rcutsq from the constructor
         Scalar epsilon; //!< epsilon parameter extracted from the params passed to the constructor
         Scalar sigma;   //!< sigma parameter extracted from the params passed to the constructor
+        Scalar c0;
+        Scalar c2;
+        Scalar c4;
+        Scalar c6;       
     };
 
 

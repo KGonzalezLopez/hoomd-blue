@@ -2912,3 +2912,69 @@ class fourier(pair):
         fourier_b = coeff['fourier_b'];
 
         return _md.make_pair_fourier_params(fourier_a,fourier_b);
+
+# My potentials -Karina
+
+class gauss_polynomial(pair):
+    R""" Gaussian potential with smoothing polynomials
+    Args:
+        r_cut (float): Default cutoff radius (in distance units).
+        nlist (:py:mod:`hoomd.md.nlist`): Neighbor list
+        name (str): Name of the force instance.
+
+    See :py:class:`pair` for details on how forces are calculated
+    Use :py:meth:`pair_coeff.set <coeff.set>` to set potential coefficients.
+
+    The following coefficients must be set per unique pair of particle types:
+    - :math:`\varepsilon` - *epsilon* (in energy units)
+    - :math:`\sigma` - *sigma* (in distance units)
+    - :math:`r_{\mathrm{cut}}` - *r_cut* (in distance units)
+      - *optional*: defaults to the global r_cut specified in the pair command
+    Example::
+        nl = nlist.cell()
+        lj = pair.lj(r_cut=3.0, nlist=nl)
+        lj.pair_coeff.set('A', 'A', epsilon=1.0, sigma=1.0)
+        lj.pair_coeff.set('A', 'B', epsilon=2.0, sigma=1.0, r_cut=3.0);
+        lj.pair_coeff.set('B', 'B', epsilon=1.0, sigma=1.0, r_cut=2**(1.0/6.0));
+        lj.pair_coeff.set(['A', 'B'], ['C', 'D'], epsilon=1.5, sigma=2.0)
+
+    """
+    def __init__(self, r_cut, nlist, name=None):
+        hoomd.util.print_status_line();
+
+        #tell the base class how we operate
+
+        #inititialize the base class
+        pair.__init__(self, r_cut, nlist, name);
+
+        #create c++ mirror class
+        if not hoomd.context.exec_conf.isCUDAEnabled():
+            self.cpp_force = _md.PotentialPairGaussPolynomial(hoomd.context.current.system_definition, self.nlist.cpp_nlist, self.name)
+            self.cpp_class = _md.PotentialPairGaussPolynomial
+        else:
+            self.nlist.cpp_nlist.setStorageMode(_md.NeighborList.storageMode.full)
+            self.cpp_force = _md.PotentialPairGaussPolynomial(hoomd.context.current.system_definition, self.nlist.cpp_nlist, self.name)
+            self.cpp_class = _md.PotentialPairGaussPolynomial
+
+        hoomd.context.current.system.addCompute(self.cpp_force, self.force_name);
+
+        # setup the coefficient options
+        self.required_coeffs = ['epsilon', 'sigma'];
+
+    def process_coeff(self, coeff):
+        epsilon = coeff['epsilon'];
+        sigma = coeff['sigma'];
+        r_cut = coeff['r_cut']
+
+        knwon_coeffs_rc = [4.0]
+        if r_cutin knwon_coeffs_rc:
+            if r_cut == 4.0:
+                #coefficients calculated with r_cut=4.0
+                c0 = -0.04238011199168398;
+                c2 = 0.006876983872001491;
+                c4 = -0.00037739545639032575;
+                c6 = 6.988804747968997e-6;
+        else:
+            raise RuntimeError("Don't know smoothing coeff, only know them for r_cut=4.0")
+        
+        return _hoomd.make_gauss_polynomial_params(_hoomd.make_scalar2(epsilon, sigma), _hoomd.make_scalar4(c0, c2, c4, c6));

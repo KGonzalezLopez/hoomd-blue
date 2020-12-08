@@ -91,6 +91,7 @@ set(_md_headers ActiveForceComputeGPU.h
                 EvaluatorPairSLJ.h
                 EvaluatorPairYukawa.h
                 EvaluatorPairZBL.h
+                EvaluatorPairGaussPolynomial.h
                 EvaluatorTersoff.h
                 EvaluatorWalls.h
                 FIREEnergyMinimizerGPU.h
@@ -218,6 +219,7 @@ set(_md_cu_sources ActiveForceComputeGPU.cu
                       SLJDriverPotentialPairGPU.cu
                       YukawaDriverPotentialPairGPU.cu
                       ZBLDriverPotentialPairGPU.cu
+                      GaussPolynomialDriverPotentialPairGPU.cu
                       BondTablePotentialGPU.cu
                       CommunicatorGridGPU.cu
                       ConstraintEllipsoidGPU.cu
