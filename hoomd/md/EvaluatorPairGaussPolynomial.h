@@ -47,7 +47,7 @@
 //! Parameter type for this potential
 struct gauss_polynomial_params
     {
-    Scalar2 coeffs; //!< epsilon, sigma
+    Scalar2 coeffs; //!<epsilon,  1/sigma^2
     Scalar4 smoothing_constants; //!< c0, c2, c4, c6 to smooth potential.
 };
 
@@ -63,7 +63,7 @@ class EvaluatorPairGaussPolynomial
             \param _params Per type pair parameters of this potential
         */
         DEVICE EvaluatorPairGaussPolynomial(Scalar _rsq, Scalar _rcutsq, const param_type& _params)
-            : rsq(_rsq), rcutsq(_rcutsq), epsilon(_params.coeffs.x), sigma(_params.coeffs.y), 
+            : rsq(_rsq), rcutsq(_rcutsq), epsilon(_params.coeffs.x), one_over_sigma_sq(_params.coeffs.y), 
             c0(_params.smoothing_constants.x), c2(_params.smoothing_constants.y), c4(_params.smoothing_constants.z), c6(_params.smoothing_constants.w)
             {
             }
@@ -100,21 +100,19 @@ class EvaluatorPairGaussPolynomial
             // compute the force divided by r in force_divr
             if (rsq < rcutsq)
                 {
-                Scalar sigma_sq = sigma*sigma;
-                Scalar r_over_sigma_sq = rsq / sigma_sq;
+                Scalar r_over_sigma_sq = rsq * one_over_sigma_sq;
                 Scalar r_over_sigma_frth = r_over_sigma_sq * r_over_sigma_sq;
                 Scalar r_over_sigma_sxth = r_over_sigma_sq * r_over_sigma_sq * r_over_sigma_sq;
                 Scalar exp_val = fast::exp(-Scalar(1.0)/Scalar(2.0) * r_over_sigma_sq);
-		Scalar pol_val = (c6 * r_over_sigma_sxth + c4 * r_over_sigma_frth \
-				                + c2 * r_over_sima_sq + c0);  
+		          Scalar pol_val = (c6 * r_over_sigma_sxth + c4 * r_over_sigma_frth + c2 * r_over_sigma_sq + c0);  
 
-                force_divr = epsilon / sigma_sq * (exp_val - Scalar(6.0) * c6 * r_over_sigma_frth
+                force_divr = (epsilon * one_over_sigma_sq) * (exp_val - Scalar(6.0) * c6 * r_over_sigma_frth
                                     - Scalar(4.0) * c4 * r_over_sigma_sq - Scalar(2.0) * c2);
                 pair_eng = epsilon * (exp_val + pol_val);
                 //wont change this function because I wont use the shift -Karina
                 if (energy_shift)
                     {
-                    pair_eng -= epsilon * fast::exp(-Scalar(1.0)/Scalar(2.0) * rcutsq / sigma_sq);
+                    pair_eng -= epsilon * fast::exp(-Scalar(1.0)/Scalar(2.0) * rcutsq * one_over_sigma_sq);
                     }
                 return true;
                 }
@@ -142,7 +140,7 @@ class EvaluatorPairGaussPolynomial
         Scalar rsq;     //!< Stored rsq from the constructor
         Scalar rcutsq;  //!< Stored rcutsq from the constructor
         Scalar epsilon; //!< epsilon parameter extracted from the params passed to the constructor
-        Scalar sigma;   //!< sigma parameter extracted from the params passed to the constructor
+        Scalar one_over_sigma_sq;   
         Scalar c0;
         Scalar c2;
         Scalar c4;

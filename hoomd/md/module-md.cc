@@ -123,9 +123,10 @@ void export_tersoff_params(py::module& m)
 }
 
 //! Function to make the Gaussian Polynomial parameter type
-inline gauss_polynomial_params make_gauss_polynomial_params(Scalar4 smoothing_constants)
+inline gauss_polynomial_params make_gauss_polynomial_params(Scalar2 coeffs, Scalar4 smoothing_constants)
     {
     gauss_polynomial_params retval;
+    retval.coeffs = coeffs;
     retval.smoothing_constants = smoothing_constants; 
     return retval;
     }
@@ -167,6 +168,7 @@ void export_gauss_polynomial_params(py::module& m)
 {
 	py::class_<gauss_polynomial_params>(m, "gauss_polynomial_params")
 		.def(py::init<>())
+		.def_readwrite("coeffss", &gauss_polynomial_params::coeffs)
 		.def_readwrite("smooothing_constants", &gauss_polynomial_params::smoothing_constants)
 		;
 	m.def("make_gauss_polynomial_params", &make_gauss_polynomial_params);
