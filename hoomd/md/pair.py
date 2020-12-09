@@ -2968,7 +2968,7 @@ class gauss_polynomial(pair):
 
         one_over_sigma_sqrd = 1.0 / (sigma*sigma)
         
-        knwon_coeffs_rc = [4.0]
+        knwon_coeffs_rc = [4.0, 4.5, 5.0]
         if r_cut in knwon_coeffs_rc:
             if r_cut == 4.0:
                 #coefficients calculated with r_cut=4.0
@@ -2976,6 +2976,16 @@ class gauss_polynomial(pair):
                 c2 = 0.006876983872001491;
                 c4 = -0.00037739545639032575;
                 c6 = 6.988804747968997e-6;
+            elif r_cut == 4.5:
+                c0 = -0.009430486752666811;
+                c2 = 0.0012496929675106026;
+                c4 = -0.000055715804187072583;
+                c6 = 8.346936956864806e-7;
+            elif r_cut == 5.0:
+                c0 = -0.0015545578430110677;
+                c2 = 0.00017072729844585412;
+                c4 = -6.288727227882758e-6; 
+                c6 = 7.763860775163897e-8;
         else:
             raise RuntimeError(f"Don't know smoothing coeff, only know them for r_cut={knwon_coeffs_rc}")
         
