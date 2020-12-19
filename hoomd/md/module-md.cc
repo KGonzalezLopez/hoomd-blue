@@ -168,7 +168,7 @@ void export_gauss_polynomial_params(py::module& m)
 {
 	py::class_<gauss_polynomial_params>(m, "gauss_polynomial_params")
 		.def(py::init<>())
-		.def_readwrite("coeffss", &gauss_polynomial_params::coeffs)
+		.def_readwrite("coeffs", &gauss_polynomial_params::coeffs)
 		.def_readwrite("smooothing_constants", &gauss_polynomial_params::smoothing_constants)
 		;
 	m.def("make_gauss_polynomial_params", &make_gauss_polynomial_params);

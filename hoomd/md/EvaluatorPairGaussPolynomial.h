@@ -13,7 +13,7 @@
 
 #include "hoomd/HOOMDMath.h"
 
-/*! \file EvaluatorPairGaussSmooth.h
+/*! \file EvaluatorPairGaussPolynomial.h
     \brief Defines the pair evaluator class for Gaussian potentials with polynomial to smoothen at rcut4
 */
 

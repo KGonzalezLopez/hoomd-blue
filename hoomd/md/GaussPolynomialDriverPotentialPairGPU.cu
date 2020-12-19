@@ -9,7 +9,7 @@
 #include "AllDriverPotentialPairGPU.cuh"
 
 cudaError_t gpu_compute_gauss_polynomial_forces(const pair_args_t& pair_args,
-                                     const Scalar2 *d_params)
+                                     const typename EvaluatorPairGaussPolynomial::param_type *d_params)
     {
     return gpu_compute_pair_forces<EvaluatorPairGaussPolynomial>(pair_args,
                                                        d_params);

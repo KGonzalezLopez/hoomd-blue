@@ -2953,8 +2953,8 @@ class gauss_polynomial(pair):
             self.cpp_class = _md.PotentialPairGaussPolynomial
         else:
             self.nlist.cpp_nlist.setStorageMode(_md.NeighborList.storageMode.full)
-            self.cpp_force = _md.PotentialPairGaussPolynomial(hoomd.context.current.system_definition, self.nlist.cpp_nlist, self.name)
-            self.cpp_class = _md.PotentialPairGaussPolynomial
+            self.cpp_force = _md.PotentialPairGaussPolynomialGPU(hoomd.context.current.system_definition, self.nlist.cpp_nlist, self.name)
+            self.cpp_class = _md.PotentialPairGaussPolynomialGPU
 
         hoomd.context.current.system.addCompute(self.cpp_force, self.force_name);
 

@@ -124,7 +124,7 @@ typedef PotentialPairGPU< EvaluatorPairDLVO, gpu_compute_dlvo_forces > Potential
 //! Pair potential force compute for Fourier forces on the gpu
 typedef PotentialPairGPU<EvaluatorPairFourier, gpu_compute_fourier_forces> PotentialPairFourierGPU;
 //! Pair potential force compute for Gaussian polynomial forces on the gpu
-typedef PotentialPairGPU<EvaluatorPairGaussPolynomial, gpu_compute_gauss_polynomial_forces> PotentialPairGaussPolynomialGPU;
+typedef PotentialPairGPU< EvaluatorPairGaussPolynomial, gpu_compute_gauss_polynomial_forces > PotentialPairGaussPolynomialGPU;
 #endif
 
 #endif // __PAIR_POTENTIALS_H__
